@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Plant Disease Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      /* Main container split */
+      .main {
+        display: flex;
+        gap: 20px;
+        width: 90%;
+        max-width: 900px;
+        align-items: stretch; /* both boxes same height */
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center; /* vertical center */
+        justify-content: center; /* horizontal center */
+        background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      /* Left side */
+      .left {
+        flex: 1;
+        background: #fff;
+        padding: 5px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        text-align: center;
+      }
+
+      /* Right side */
+      .right {
+        flex: 1;
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        text-align: center;
+      }
+
+      /* Upload box */
+      .upload-box {
+        border: 2px dashed #bbb;
+        padding: 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        padding-bottom: 5px;
+      }
+
+      .upload-box:hover {
+        border-color: #36d1dc;
+        background: #f7fbff;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      /* Preview */
+      #preview {
+        margin-top: 15px;
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        display: none;
+      }
+
+      /* Button */
+      button {
+        margin-top: 15px;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #36d1dc, #5b86e5);
+        color: white;
+        cursor: pointer;
+      }
+
+      /* Result image */
+      .right img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      .upload {
+        padding-bottom: 10px;
+      }
+
+      /* Mobile responsive */
+      @media (max-width: 768px) {
+        .main {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="main">
+      <!-- LEFT SIDE -->
+      <div class="left">
+        <h1>🌿 Plant Disease Detection</h1>
+        <p class="upload">Upload a leaf image</p>
+
+        <form action="/predict" method="post" enctype="multipart/form-data">
+          <label class="upload-box">
+            📁 Choose Image
+            <input type="file" name="image" id="imageInput" required />
+          </label>
+
+          <img id="preview" />
+
+          <button type="submit" style="padding-top: 20px">Predict</button>
+        </form>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="right">
+        {% if result %}
+        <h2>Disease Detected: {{ result }}</h2>
+        <h3>Accuracy: {{ confidence }}%</h3>
+        <img src="{{ image_path }}" />
+        {% else %}
+        <p style="color: #777">Result will appear here</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+      const input = document.getElementById("imageInput");
+      const preview = document.getElementById("preview");
+
+      input.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (file) {
+          const reader = new FileReader();
+
+          preview.style.display = "block";
+
+          reader.onload = function () {
+            preview.src = this.result;
+          };
+
+          reader.readAsDataURL(file);
+        }
+      });
+    </script>
+  </body>
+</html>
